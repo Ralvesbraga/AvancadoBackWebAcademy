@@ -15,5 +15,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
         OR p.nomeUsuario LIKE %:termoBusca%
     """)
     List<Usuario> busca(String termoBusca);
+
+    Usuario findByNomeUsuario(String nomeUsuario);
     
 }
