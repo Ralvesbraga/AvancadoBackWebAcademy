@@ -13,53 +13,56 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-
 @Configuration
 @EnableWebSecurity
 public class Seguranca {
-    
+
     private final PerfilUsuarioService perfilUsuarioService;
 
     public Seguranca(
-        PerfilUsuarioService perfilUsuarioService
-    ){
+            PerfilUsuarioService perfilUsuarioService) {
         this.perfilUsuarioService = perfilUsuarioService;
     }
+
     @Bean
-    AuthenticationManager authManager (AuthenticationConfiguration authConfig) throws Exception{
+    AuthenticationManager authManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
 
     @Bean
-    UserDetailsService udServicce(){
+    UserDetailsService udService() {
         return perfilUsuarioService;
     }
 
     @Bean
-    BCryptPasswordEncoder passEncoder(){
+    BCryptPasswordEncoder passEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    DaoAuthenticationProvider authProvider(){
+    DaoAuthenticationProvider authProvider() {
         var authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(udServicce());
+        authProvider.setUserDetailsService(udService());
         authProvider.setPasswordEncoder(passEncoder());
         return authProvider;
     }
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.httpBasic(withDefaults());
         http.cors(withDefaults());
         http.csrf(csrf -> csrf.disable());
         http.authenticationProvider(authProvider());
-        http.authorizeHttpRequests(
-            authorize -> authorize.requestMatchers("/config/**").hasRole("ADMIN")
-            .anyRequest().authenticated()
-        );
 
+        http.authorizeHttpRequests(
+            authorize -> authorize
+                .requestMatchers("/config/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
+        );
+        
         return http.build();
+
     }
+    
 }

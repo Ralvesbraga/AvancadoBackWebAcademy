@@ -8,11 +8,11 @@ import org.springframework.stereotype.Service;
 import br.ufac.sgcmapi.service.UsuarioService;
 
 @Service
-public class PerfilUsuarioService implements UserDetailsService{
+public class PerfilUsuarioService implements UserDetailsService {
 
     private final UsuarioService servico;
 
-    public PerfilUsuarioService(UsuarioService servico){
+    public PerfilUsuarioService(UsuarioService servico) {
         this.servico = servico;
     }
 

@@ -9,11 +9,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import br.ufac.sgcmapi.model.Usuario;
 
-public class PerfilUsuario implements UserDetails{
+public class PerfilUsuario implements UserDetails {
 
     private final Usuario usuario;
 
-    public PerfilUsuario(Usuario usuario){
+    public PerfilUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
 
