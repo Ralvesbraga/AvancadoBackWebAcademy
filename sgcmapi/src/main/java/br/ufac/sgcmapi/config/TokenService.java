@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 
 import br.ufac.sgcmapi.model.Usuario;
 
@@ -41,6 +42,12 @@ public class TokenService {
     }
 
     public String validarToken(String token){
+
+        try {
+            JWT.decode(token);
+        } catch (JWTDecodeException e) {
+            return null;
+        }
         var secret_crypt = Algorithm.HMAC256(secret);
         var tokenValidado = JWT.require(secret_crypt)
                                 .withIssuer("SGCM")
