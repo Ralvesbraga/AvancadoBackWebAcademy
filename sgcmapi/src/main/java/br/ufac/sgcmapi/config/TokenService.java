@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 
 import br.ufac.sgcmapi.model.Usuario;
 
@@ -48,12 +50,25 @@ public class TokenService {
         } catch (JWTDecodeException e) {
             return null;
         }
+
         var secret_crypt = Algorithm.HMAC256(secret);
-        var tokenValidado = JWT.require(secret_crypt)
+
+        try {
+            var tokenValidado = JWT.require(secret_crypt)
                                 .withIssuer("SGCM")
                                 .build()
                                 .verify(token);
+            return tokenValidado.getSubject();
+        } catch (TokenExpiredException e) {
+            return null;
+        }
 
-        return tokenValidado.getSubject();
+    }
+
+    public boolean isDataLimiteExpirada(DecodedJWT tokenDecodificado){
+        var claimDataLimite = tokenDecodificado.getClaim("dataLimiteRenovacao");
+        var dataLimite = LocalDate.parse(claimDataLimite.asString());
+        var hoje = LocalDate.now();
+        return hoje.isAfter(dataLimite);
     }
 }
