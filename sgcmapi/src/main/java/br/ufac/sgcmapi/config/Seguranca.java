@@ -64,6 +64,7 @@ public class Seguranca {
 
         http.authorizeHttpRequests(
             authorize -> authorize
+                .requestMatchers(HttpMethod.GET, "/").permitAll()
                 .requestMatchers(HttpMethod.POST,"/autenticacao").permitAll()
                 .requestMatchers("/config/**").hasRole("ADMIN")
                 .anyRequest().authenticated()

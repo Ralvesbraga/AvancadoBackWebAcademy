@@ -2,6 +2,9 @@ package br.ufac.sgcmapi.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -23,6 +26,7 @@ public class Usuario implements Serializable {
     @Column(nullable = false, unique = true)
     private String nomeUsuario;
 
+    // @JsonProperty(access = Access.WRITE_ONLY)
     private String senha;
 
     @Column(nullable = false)

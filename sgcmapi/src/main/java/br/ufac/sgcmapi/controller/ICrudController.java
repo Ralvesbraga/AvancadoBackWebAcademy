@@ -6,10 +6,10 @@ import org.springframework.http.ResponseEntity;
 
 public interface ICrudController<T> {
 
-    public ResponseEntity<List<T>> get(String termoBusca);
-    public ResponseEntity<T> get(Long id);
-    public ResponseEntity<T> insert(T objeto);
-    public ResponseEntity<T> update(T objeto);
-    public ResponseEntity<Void> delete(Long id);
+    public ResponseEntity<?> get(String termoBusca);
+    public ResponseEntity<?> get(Long id);
+    public ResponseEntity<?> insert(T objeto);
+    public ResponseEntity<?> update(T objeto);
+    public ResponseEntity<?> delete(Long id);
     
 }

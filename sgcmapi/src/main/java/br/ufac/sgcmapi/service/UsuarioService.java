@@ -2,6 +2,7 @@ package br.ufac.sgcmapi.service;
 
 import java.util.List;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.ufac.sgcmapi.model.Usuario;
@@ -31,6 +32,16 @@ public class UsuarioService implements ICrudService<Usuario> {
 
     @Override
     public Usuario save(Usuario objeto) {
+        if (objeto.getSenha() == null || objeto.getSenha().isBlank()) {
+            var usuario = get(objeto.getId());
+            if (usuario !=null) {
+                objeto.setSenha(usuario.getSenha());
+            }
+        }else{
+            var passEncoder = new BCryptPasswordEncoder();
+            var senhaCriptografada = passEncoder.encode(objeto.getSenha());
+            objeto.setSenha(senhaCriptografada);
+        }
         return repo.save(objeto);
     }
 
