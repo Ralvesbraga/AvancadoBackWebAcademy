@@ -53,16 +53,18 @@ public class UsuarioController implements ICrudController<Usuario> {
 
     @Override
     @PostMapping("/inserir")
-    public ResponseEntity<Usuario> insert(@RequestBody Usuario objeto) {
+    public ResponseEntity<UsuarioDto> insert(@RequestBody Usuario objeto) {
         var registro = servico.save(objeto);
-        return ResponseEntity.created(null).body(registro);
+        var dto = mapper.toDto(registro);
+        return ResponseEntity.created(null).body(dto);
     }
 
     @Override
     @PutMapping("/atualizar")
-    public ResponseEntity<Usuario> update(@RequestBody Usuario objeto) {
+    public ResponseEntity<UsuarioDto> update(@RequestBody Usuario objeto) {
         var registro = servico.save(objeto);
-        return ResponseEntity.ok(registro);
+        var dto = mapper.toDto(objeto);
+        return ResponseEntity.ok(dto);
     }
 
     @Override

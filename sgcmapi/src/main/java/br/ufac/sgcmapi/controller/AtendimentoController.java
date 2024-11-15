@@ -13,48 +13,56 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.ufac.sgcmapi.model.Atendimento;
+import br.ufac.sgcmapi.controller.dto.AtendimentoDto;
+import br.ufac.sgcmapi.controller.mapper.AtendimentoMapper;
 import br.ufac.sgcmapi.service.AtendimentoService;
 
 @RestController
 @RequestMapping("/atendimento")
-public class AtendimentoController implements ICrudController<Atendimento> {
+public class AtendimentoController implements ICrudController<AtendimentoDto> {
 
     private final AtendimentoService servico;
+    private final AtendimentoMapper mapper;
 
-    public AtendimentoController(AtendimentoService servico) {
+    public AtendimentoController(AtendimentoService servico,
+    AtendimentoMapper mapper) {
         this.servico = servico;
+        this.mapper =mapper;
     }
 
     @Override
     @GetMapping("/consultar")
-    public ResponseEntity<List<Atendimento>> get(@RequestParam(required = false) String termoBusca) {
+    public ResponseEntity<List<AtendimentoDto>> get(@RequestParam(required = false) String termoBusca) {
         var registros = servico.get(termoBusca);
-        return ResponseEntity.ok(registros);
+        var dtos = registros.stream().map(mapper::toDto).toList();
+        return ResponseEntity.ok(dtos);
     }
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<Atendimento> get(@PathVariable Long id) {
+    public ResponseEntity<AtendimentoDto> get(@PathVariable Long id) {
         var registro = servico.get(id);
         if (registro == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(registro);
+        var dto = mapper.toDto(registro);
+        return ResponseEntity.ok(dto);
     }
 
-    @Override
     @PostMapping("/inserir")
-    public ResponseEntity<Atendimento> insert(@RequestBody Atendimento objeto) {
-        var registro = servico.save(objeto);
-        return ResponseEntity.created(null).body(registro);
+    public ResponseEntity<AtendimentoDto> insert(@RequestBody AtendimentoDto objeto) {
+        var objetoConvertido = mapper.toEntity(objeto);
+        var registro = servico.save(objetoConvertido);
+        var dto = mapper.toDto(registro);
+        return ResponseEntity.created(null).body(dto);
     }
-
-    @Override
+    
     @PutMapping("/atualizar")
-    public ResponseEntity<Atendimento> update(@RequestBody Atendimento objeto) {
-        var registro = servico.save(objeto);
-        return ResponseEntity.ok(registro);
+    public ResponseEntity<AtendimentoDto> update(@RequestBody AtendimentoDto objeto) {
+        var objetoConvertido = mapper.toEntity(objeto);
+        var registro = servico.save(objetoConvertido);
+        var dto = mapper.toDto(registro);
+        return ResponseEntity.ok(dto);
     }
 
     @Override
@@ -65,9 +73,10 @@ public class AtendimentoController implements ICrudController<Atendimento> {
     }
 
     @PutMapping("/status/{id}")
-    public ResponseEntity<Atendimento> updateStatus(@PathVariable Long id) {
+    public ResponseEntity<AtendimentoDto> updateStatus(@PathVariable Long id) {
         var registro = servico.updateStatus(id);
-        return ResponseEntity.ok(registro);
+        var dto = mapper.toDto(registro);
+        return ResponseEntity.ok(dto);
     }
     
 }
