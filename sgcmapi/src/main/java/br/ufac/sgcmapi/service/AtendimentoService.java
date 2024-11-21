@@ -2,6 +2,9 @@ package br.ufac.sgcmapi.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import br.ufac.sgcmapi.model.Atendimento;
@@ -9,7 +12,7 @@ import br.ufac.sgcmapi.model.EStatus;
 import br.ufac.sgcmapi.repository.AtendimentoRepository;
 
 @Service
-public class AtendimentoService implements ICrudService<Atendimento> {
+public class AtendimentoService implements ICrudService<Atendimento>, IPageService<Atendimento> {
 
     private final AtendimentoRepository repo;
 
@@ -19,10 +22,17 @@ public class AtendimentoService implements ICrudService<Atendimento> {
 
     @Override
     public List<Atendimento> get(String termoBusca) {
+        var ordenacao = Sort.by("data").ascending();
+        var registros = this.get(termoBusca, Pageable.unpaged(ordenacao));
+        return registros.getContent();
+    }
+
+    @Override
+    public Page<Atendimento> get(String termoBusca, Pageable page) {
         if (termoBusca != null && !termoBusca.isBlank()) {
-            return repo.busca(termoBusca);
+            return repo.busca(termoBusca, page);
         }
-        return repo.findAll();
+        return repo.findAll(page);
     }
 
     @Override
@@ -32,6 +42,11 @@ public class AtendimentoService implements ICrudService<Atendimento> {
 
     @Override
     public Atendimento save(Atendimento objeto) {
+        try {
+            Thread.sleep(1000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return repo.save(objeto);
     }
 
@@ -53,5 +68,6 @@ public class AtendimentoService implements ICrudService<Atendimento> {
         }
         return registro;
     }
+
     
 }

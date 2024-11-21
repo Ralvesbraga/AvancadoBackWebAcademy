@@ -1,7 +1,5 @@
 package br.ufac.sgcmapi.controller;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 
 public interface ICrudController<T> {

@@ -10,15 +10,16 @@ import br.ufac.sgcmapi.model.Atendimento;
 @Mapper(componentModel = "spring")
 public interface AtendimentoMapper {
 
-    @Mapping(target = "profissional_id", source ="profissional.id" )
-    @Mapping(target = "profissional_nome", source ="profissional.nome")
-    @Mapping(target = "convenio_id", source ="convenio.id")
-    @Mapping(target = "convenio_nome", source ="convenio.nome")
-    @Mapping(target = "paciente_id", source ="paciente.id" )
-    @Mapping(target = "paciente_nome", source ="paciente.nome")
-    @Mapping(target = "unidade_nome", source ="profissional.unidade.nome")
+    @Mapping(target = "profissional_id", source = "profissional.id")
+    @Mapping(target = "profissional_nome", source = "profissional.nome")
+    @Mapping(target = "convenio_id", source = "convenio.id")
+    @Mapping(target = "convenio_nome", source = "convenio.nome")
+    @Mapping(target = "paciente_id", source = "paciente.id")
+    @Mapping(target = "paciente_nome", source = "paciente.nome")
+    @Mapping(target = "unidade_nome", source = "profissional.unidade.nome")
     AtendimentoDto toDto(Atendimento atendimento);
-    
+
     @InheritInverseConfiguration
     Atendimento toEntity(AtendimentoDto dto);
+    
 }

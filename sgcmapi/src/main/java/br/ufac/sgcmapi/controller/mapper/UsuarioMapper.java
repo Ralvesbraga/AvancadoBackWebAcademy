@@ -8,9 +8,10 @@ import br.ufac.sgcmapi.model.Usuario;
 
 @Mapper(componentModel = "spring")
 public interface UsuarioMapper {
-    
+
     UsuarioDto toDto(Usuario usuario);
 
     @Mapping(target = "senha", ignore = true)
     Usuario toEntity(UsuarioDto dto);
+    
 }

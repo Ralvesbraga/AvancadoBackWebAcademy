@@ -60,18 +60,20 @@ public class Seguranca {
         http.cors(withDefaults());
         http.csrf(csrf -> csrf.disable());
         http.authenticationProvider(authProvider());
-        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.sessionManagement(
+            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        );
 
         http.authorizeHttpRequests(
             authorize -> authorize
                 .requestMatchers(HttpMethod.GET, "/").permitAll()
-                .requestMatchers(HttpMethod.POST,"/autenticacao").permitAll()
+                .requestMatchers(HttpMethod.GET, "/v3/api-docs/**", "/v3/api-docs*", "/swagger-ui/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/autenticacao").permitAll()
                 .requestMatchers("/config/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
         );
 
-        http.addFilterBefore(tokenFilter,
-         UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
         
         return http.build();
 

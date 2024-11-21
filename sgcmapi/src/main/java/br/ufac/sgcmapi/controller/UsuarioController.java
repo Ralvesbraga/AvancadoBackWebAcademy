@@ -1,6 +1,5 @@
 package br.ufac.sgcmapi.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -26,8 +25,9 @@ public class UsuarioController implements ICrudController<Usuario> {
     private final UsuarioService servico;
     private final UsuarioMapper mapper;
 
-    public UsuarioController(UsuarioService servico,
-                                UsuarioMapper mapper) {
+    public UsuarioController(
+            UsuarioService servico,
+            UsuarioMapper mapper) {
         this.servico = servico;
         this.mapper = mapper;
     }
@@ -36,6 +36,15 @@ public class UsuarioController implements ICrudController<Usuario> {
     @GetMapping("/consultar")
     public ResponseEntity<List<UsuarioDto>> get(@RequestParam(required = false) String termoBusca) {
         var registros = servico.get(termoBusca);
+        // var dtos = new ArrayList<UsuarioDto>();
+        // for (Usuario item : registros) {
+        //     dtos.add(new UsuarioDto(item.getId(),
+        //                             item.getNomeCompleto(),
+        //                             item.getNomeUsuario(),
+        //                             item.getPapel().name(),
+        //                             item.isAtivo()));
+        // }
+        // var dtos = registros.stream().map(item -> UsuarioDto.toDto(item)).toList();
         var dtos = registros.stream().map(mapper::toDto).toList();
         return ResponseEntity.ok(dtos);
     }
@@ -63,7 +72,7 @@ public class UsuarioController implements ICrudController<Usuario> {
     @PutMapping("/atualizar")
     public ResponseEntity<UsuarioDto> update(@RequestBody Usuario objeto) {
         var registro = servico.save(objeto);
-        var dto = mapper.toDto(objeto);
+        var dto = mapper.toDto(registro);
         return ResponseEntity.ok(dto);
     }
 

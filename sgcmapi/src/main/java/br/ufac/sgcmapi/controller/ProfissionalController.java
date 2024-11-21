@@ -3,6 +3,7 @@ package br.ufac.sgcmapi.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,8 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.ufac.sgcmapi.controller.dto.ProfissionalDto;
 import br.ufac.sgcmapi.controller.mapper.ProfissionalMapper;
-import br.ufac.sgcmapi.model.Profissional;
 import br.ufac.sgcmapi.service.ProfissionalService;
+import br.ufac.sgcmapi.validator.groups.OnInsert;
+import br.ufac.sgcmapi.validator.groups.OnUpdate;
 
 @RestController
 @RequestMapping("/profissional")
@@ -25,8 +27,9 @@ public class ProfissionalController implements ICrudController<ProfissionalDto> 
     private final ProfissionalService servico;
     private final ProfissionalMapper mapper;
 
-    public ProfissionalController(ProfissionalService servico,
-                                    ProfissionalMapper mapper) {
+    public ProfissionalController(
+            ProfissionalService servico,
+            ProfissionalMapper mapper) {
         this.servico = servico;
         this.mapper = mapper;
     }
@@ -52,7 +55,7 @@ public class ProfissionalController implements ICrudController<ProfissionalDto> 
 
     @Override
     @PostMapping("/inserir")
-    public ResponseEntity<ProfissionalDto> insert(@RequestBody ProfissionalDto objeto) {
+    public ResponseEntity<ProfissionalDto> insert(@RequestBody @Validated(OnInsert.class) ProfissionalDto objeto) {
         var objetoConvertido = mapper.toEntity(objeto);
         var registro = servico.save(objetoConvertido);
         var dto = mapper.toDto(registro);
@@ -61,7 +64,7 @@ public class ProfissionalController implements ICrudController<ProfissionalDto> 
 
     @Override
     @PutMapping("/atualizar")
-    public ResponseEntity<ProfissionalDto> update(@RequestBody ProfissionalDto objeto) {
+    public ResponseEntity<ProfissionalDto> update(@RequestBody @Validated(OnUpdate.class) ProfissionalDto objeto) {
         var objetoConvertido = mapper.toEntity(objeto);
         var registro = servico.save(objetoConvertido);
         var dto = mapper.toDto(registro);

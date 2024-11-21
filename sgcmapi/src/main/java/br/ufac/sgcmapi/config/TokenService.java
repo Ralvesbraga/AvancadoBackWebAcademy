@@ -22,28 +22,30 @@ public class TokenService {
     @Value("${jwt.secret}")
     private String secret;
 
-    private Instant gerarDataEspiracao(){
+    private Instant gerarDataExpiracao() {
         var dateTime = LocalDateTime.now().plusMinutes(30);
         var zoneId = ZoneId.systemDefault();
         var zoneDateTime = dateTime.atZone(zoneId);
         return zoneDateTime.toInstant();
     }
 
-    public String criarToken(Usuario usuario){
+    public String criarToken(Usuario usuario) {
 
         var secret_crypt = Algorithm.HMAC256(secret);
         var token = JWT.create()
-                        .withIssuer("SGCM")
-                        .withSubject(usuario.getNomeUsuario())
-                        .withClaim("nomeCompleto", usuario.getNomeCompleto())
-                        .withClaim("papel", usuario.getPapel().toString())
-                        .withClaim("dataLimiteRenovacao", LocalDate.now().toString())
-                        .withExpiresAt(gerarDataEspiracao())
-                        .sign(secret_crypt);
+                       .withIssuer("SGCM")
+                       .withSubject(usuario.getNomeUsuario())
+                       .withClaim("nomeCompleto", usuario.getNomeCompleto())
+                       .withClaim("papel", usuario.getPapel().toString())
+                       .withClaim("dataLimiteRenovacao", LocalDate.now().toString())
+                       .withExpiresAt(gerarDataExpiracao())
+                       .sign(secret_crypt);
+
         return token;
+
     }
 
-    public String validarToken(String token){
+    public String validarToken(String token) {
 
         try {
             JWT.decode(token);
@@ -55,20 +57,21 @@ public class TokenService {
 
         try {
             var tokenValidado = JWT.require(secret_crypt)
-                                .withIssuer("SGCM")
-                                .build()
-                                .verify(token);
-            return tokenValidado.getSubject();
+                                   .withIssuer("SGCM")
+                                   .build()
+                                   .verify(token); 
+            return tokenValidado.getSubject();          
         } catch (TokenExpiredException e) {
             return null;
         }
 
     }
 
-    public boolean isDataLimiteExpirada(DecodedJWT tokenDecodificado){
+    public boolean isDataLimiteExpirada(DecodedJWT tokenDecodificado) {
         var claimDataLimite = tokenDecodificado.getClaim("dataLimiteRenovacao");
         var dataLimite = LocalDate.parse(claimDataLimite.asString());
         var hoje = LocalDate.now();
         return hoje.isAfter(dataLimite);
     }
+    
 }
