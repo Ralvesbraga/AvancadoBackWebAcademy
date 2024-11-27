@@ -1,7 +1,5 @@
 package br.ufac.sgcmapi.repository;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,7 +20,7 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, Long> 
         OR pa.nome LIKE %:termoBusca%
         OR c.nome LIKE %:termoBusca%
         OR e.nome LIKE %:termoBusca%
-        OR u.nome LIKE %:termoBusca%                
+        OR u.nome LIKE %:termoBusca%
     """)
     Page<Atendimento> busca(String termoBusca, Pageable page);
     

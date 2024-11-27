@@ -2,7 +2,12 @@ package br.ufac.sgcmapi.service;
 
 import java.util.List;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -21,14 +26,33 @@ public class AtendimentoService implements ICrudService<Atendimento>, IPageServi
     }
 
     @Override
+    @Cacheable(
+        value = "atendimentos",
+        key = "'todos'",
+        condition = "#termoBusca == null or #termoBusca.isBlank()"
+    )
     public List<Atendimento> get(String termoBusca) {
-        var ordenacao = Sort.by("data").ascending();
-        var registros = this.get(termoBusca, Pageable.unpaged(ordenacao));
-        return registros.getContent();
+        System.out.println("Consultando todos os atendimentos com termo de busca '" + termoBusca + "' sem cache");
+        // Ordenar usando a memória
+        // var registros = this.get(termoBusca, Pageable.unpaged()).getContent();
+        // var registrosOrdenados = registros.stream().sorted(Comparator.comparing(Atendimento::getData)).toList();
+        // return registrosOrdenados;
+
+        // Ordenação no banco de dados
+        var ordenacao = Sort.by(Sort.Direction.ASC, "data", "hora");
+        var page = PageRequest.of(0, Integer.MAX_VALUE, ordenacao);
+        var registros = this.get(termoBusca, page).getContent();
+        return registros;
     }
 
     @Override
+    @Cacheable(
+        value = "atendimentos",
+        key = "'paginado' + '-page:' + #page.pageNumber + '-size:' + #page.pageSize + '-sort:' + #page.sort.toString()",
+        condition = "#termoBusca == null or #termoBusca.isBlank()"
+    )
     public Page<Atendimento> get(String termoBusca, Pageable page) {
+        System.out.println("Consultando atendimentos com termo de busca '" + termoBusca + "' sem cache");
         if (termoBusca != null && !termoBusca.isBlank()) {
             return repo.busca(termoBusca, page);
         }
@@ -36,11 +60,19 @@ public class AtendimentoService implements ICrudService<Atendimento>, IPageServi
     }
 
     @Override
+    @Cacheable(value = "atendimento", unless = "#result == null")
     public Atendimento get(Long id) {
+        System.out.println("Consultando atedimento " + id + " sem cache");
         return repo.findById(id).orElse(null);
     }
 
     @Override
+    @Caching(
+        evict = {
+            @CacheEvict(value = "atendimento", key = "#objeto.id"),
+            @CacheEvict(value = "atendimentos", allEntries = true)
+        }
+    )
     public Atendimento save(Atendimento objeto) {
         try {
             Thread.sleep(1000);
@@ -51,6 +83,12 @@ public class AtendimentoService implements ICrudService<Atendimento>, IPageServi
     }
 
     @Override
+    @Caching(
+        evict = {
+            @CacheEvict(value = "atendimento", key = "#id"),
+            @CacheEvict(value = "atendimentos", allEntries = true)
+        }
+    )
     public void delete(Long id) {
         var registro = this.get(id);
         if (registro != null) {
@@ -59,6 +97,10 @@ public class AtendimentoService implements ICrudService<Atendimento>, IPageServi
         }
     }
 
+    @Caching(
+        put = { @CachePut(value = "atendimento", key = "#id") },
+        evict = { @CacheEvict(value = "atendimentos", allEntries = true) }
+    )   
     public Atendimento updateStatus(Long id) {
         var registro = this.get(id);
         if (registro != null) {
@@ -68,6 +110,5 @@ public class AtendimentoService implements ICrudService<Atendimento>, IPageServi
         }
         return registro;
     }
-
     
 }

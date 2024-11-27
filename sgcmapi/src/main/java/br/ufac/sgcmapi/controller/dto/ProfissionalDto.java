@@ -8,24 +8,23 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 public record ProfissionalDto(
-    @NotNull(groups=OnUpdate.class)
+    @NotNull(groups = OnUpdate.class)
     Long id,
-    @NotBlank(groups={OnInsert.class, OnUpdate.class})
+    @NotBlank(groups = { OnInsert.class, OnUpdate.class })
     String nome,
-    @NotBlank(groups={OnInsert.class, OnUpdate.class})
-    @Email(message = "deve estar no formato usuario@dominio.com",
-    regexp= "^(.+)@(sou\\.)?ufac\\.br$", groups=OnInsert.class)
+    @NotBlank(groups = { OnInsert.class, OnUpdate.class })
+    @Email(message = "deve ser do domínio @ufac.br ou @sou.ufac.br", regexp = "^(.+)@(sou\\.)?ufac\\.br$", groups = OnInsert.class)
     @Email(groups = OnUpdate.class)
     String email,
-    @NotBlank(groups={OnInsert.class, OnUpdate.class})
+    @NotBlank(groups = { OnInsert.class, OnUpdate.class })
     String registroConselho,
-    @NotBlank(groups={OnInsert.class, OnUpdate.class})
-    @Pattern(regexp = "^\\(\\d{2}\\) \\d{4,5}-\\d{4}$", message= "deve seguir o formato (55) 55555-5555")
+    @NotBlank(groups = { OnInsert.class, OnUpdate.class })
+    @Pattern(regexp = "^\\(\\d{2}\\) \\d{4,5}-\\d{4}$", message = "deve seguir o formato (55) 55555-5555", groups = { OnInsert.class, OnUpdate.class })
     String telefone,
-    @NotNull(groups={OnInsert.class, OnUpdate.class})
+    @NotNull(groups = { OnInsert.class, OnUpdate.class })
     Long especialidade_id,
     String especialidade_nome,
-    @NotNull(groups={OnInsert.class, OnUpdate.class})
+    @NotNull(groups = { OnInsert.class, OnUpdate.class })
     Long unidade_id,
     String unidade_nome
 ) {

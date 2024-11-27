@@ -12,9 +12,9 @@ import br.ufac.sgcmapi.model.RespostaErro;
 
 @ControllerAdvice
 public class ControllerExcecoes {
-    
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<RespostaErro> validacao(MethodArgumentNotValidException e){
+    public ResponseEntity<RespostaErro> validacao(MethodArgumentNotValidException e) {
         var mensagensErro = new ArrayList<String>();
         e.getBindingResult().getAllErrors().forEach(
             erro -> {
@@ -27,4 +27,5 @@ public class ControllerExcecoes {
         var resposta = new RespostaErro(mensagensErro);
         return ResponseEntity.badRequest().body(resposta);
     }
+    
 }
